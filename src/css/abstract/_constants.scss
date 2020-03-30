@@ -1,0 +1,55 @@
+$color-brand: orange;
+$color-background: #e6e6e6;
+$font-main: grey;
+$color-link: blue;
+
+
+$content-width: 1200px;
+$tablet-wirth: 768px;
+$mobile-big-width: 414px;
+$mobile-small-width: 320px;
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: $color-background;
+}
+
+header {
+    background: $color-brand;
+}
+
+.container {
+    width: 1020px;
+    margin: auto;
+    outline: 1px solid;
+}
+
+.keyboard__input {
+    width: 100%;
+    height: 300px;
+    font-size: 21px;
+    padding: 6px;
+    color: #7f7f7f;
+}
+
+.keyboard__buttons {
+    padding: 20px 50px;
+    display: flex;
+}
+
+.keyboard__button {
+    border: 1px solid;
+    padding: 23px;
+    margin: auto;
+    cursor: pointer;
+}
+
+.active {
+    background: forestgreen;
+}
