@@ -38,18 +38,71 @@ header {
     color: #7f7f7f;
 }
 
-.keyboard__buttons {
+.keyboard {
     padding: 20px 50px;
     display: flex;
-}
+    flex-wrap: wrap;
 
-.keyboard__button {
-    border: 1px solid;
-    padding: 23px;
-    margin: auto;
-    cursor: pointer;
-}
+    &__button {
+        padding: 29px;
+        margin: auto;
+        margin-bottom: 5px;
+        cursor: pointer;
+        border-radius: 4px;
+        border: 1px solid #d2d0d0;
+        background: white;
+        transition: 0.3s ease-in-out;
+        position: relative;
+        &:hover {
+            background: #ebebe9;
+        }
+        &--ssss {
+            text-transform: uppercase;
+        }
+    }
+    &__button[data-code="Enter"] {
+        width: 130px;
+    }
+    &__button[data-code="ShiftRight"], &__button[data-code="ShiftLeft"] {
+        width: 125px;
+    }
 
+    &__button[data-code="Space"] {
+        width: 355px;
+    }
+
+    &__button[data-code="Backspace"] {
+        width: 121px;
+    }
+
+    &__button[data-code="CapsLock"] {
+        width: 106px;
+    }
+
+    &__button[data-code="ArrowRight"] {
+        margin-right: 63px;
+    }
+
+    & span {
+        position: absolute;
+        opacity: 0.3;
+        margin-left: 10px;
+        margin-top: -20px;
+        &.layout--active  {
+            opacity: 1;
+            margin-left: -5px;
+            margin-top: 0px;
+        }
+
+        &.layout-stable {
+            opacity: 1;
+            margin-left: -15px;
+            margin-top: -7px;
+        }
+
+    }
+}
 .active {
-    background: forestgreen;
+    background: $color-brand;
 }
+
