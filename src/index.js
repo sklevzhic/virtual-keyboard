@@ -2,18 +2,18 @@ import { Button  } from './js/Button';
 
 const buttons = [
     {code: 'Backquote', en: '`', ru: 'ё', print: true},
-    {code: 'Digit1', en: '1', ru: '1', print: true},
-    {code: 'Digit2', en: '2', ru: '2', print: true},
-    {code: 'Digit3', en: '3', ru: '3', print: true},
-    {code: 'Digit4', en: '4', ru: '4', print: true},
-    {code: 'Digit5', en: '5', ru: '5', print: true},
-    {code: 'Digit6', en: '6', ru: '6', print: true},
-    {code: 'Digit7', en: '7', ru: '7', print: true},
-    {code: 'Digit8', en: '8', ru: '8', print: true},
-    {code: 'Digit9', en: '9', ru: '9', print: true},
-    {code: 'Digit0', en: '0', ru: '0', print: true},
-    {code: 'Minus', en: '-', ru: '-', print: true},
-    {code: 'Equal', en: '=', ru: '=', print: true},
+    {code: 'Digit1', en: '1', ru: '1', spec: '!', print: true},
+    {code: 'Digit2', en: '2', ru: '2', spec: '@', print: true},
+    {code: 'Digit3', en: '3', ru: '3', spec: '#',  print: true},
+    {code: 'Digit4', en: '4', ru: '4', spec: '$',  print: true},
+    {code: 'Digit5', en: '5', ru: '5', spec: '%',  print: true},
+    {code: 'Digit6', en: '6', ru: '6', spec: '^',  print: true},
+    {code: 'Digit7', en: '7', ru: '7', spec: '&',  print: true},
+    {code: 'Digit8', en: '8', ru: '8', spec: '*',  print: true},
+    {code: 'Digit9', en: '9', ru: '9', spec: '(',  print: true},
+    {code: 'Digit0', en: '0', ru: '0',spec: ')', print: true},
+    {code: 'Minus', en: '-', ru: '-', spec: '_',  print: true},
+    {code: 'Equal', en: '=', ru: '=', spec: '+',  print: true},
     {code: 'Backspace', en: 'Backspace', ru: 'Backspace', print: false},
     { code: 'Tab', en: 'Tab', ru: 'Tab', print: false},
     { code: 'KeyQ', en: 'q', ru: 'й', print: true},
@@ -28,7 +28,7 @@ const buttons = [
     { code: 'KeyP', en: 'p', ru: 'з', print: true},
     { code: 'BracketLeft', en: '[', ru: 'х', print: true},
     { code: 'BracketRight', en: ']', ru: 'ъ', print: true},
-    { code: 'Backslash', en: '\\', ru: '\\', print: true},
+    { code: 'Backslash', en: '\\', ru: '\\', spec: '|', print: true},
     { code: 'Delete', en: 'DEL', ru: 'DEL', print: false},
     { code: 'CapsLock', en: 'Caps Lock', ru: 'Caps Lock', print: false},
     { code: 'KeyA', en: 'a', ru: 'ф', print: true},
@@ -59,7 +59,7 @@ const buttons = [
     { code: 'ControlLeft', en: 'Ctrl', ru: 'Ctrl', print: false},
     { code: 'MetaLeft', en: 'Win', ru: 'Win', print: false},
     { code: 'AltLeft', en: 'Alt', ru: 'Alt', print: false},
-    { code: 'Space', en: ' ', ru: ' ', print: true},
+    { code: 'Space', en: ' ', ru: ' ', spec: ' ', print: true},
     { code: 'AltRight', en: 'Alt', ru: 'Alt', print: false},
     { code: 'ControlRight', en: 'Ctrl', ru: 'Ctrl', print: false},
     { code: 'ArrowLeft', en: '◄', ru: '◄', print: false},
@@ -112,32 +112,71 @@ let inputText = document.createElement('textarea');
 
 let keyboardWrapper = document.createElement('label')
     keyboardWrapper.classList = 'keyboard';
-    // keyboardWrapper.setAttribute('for', 'keyboard');
+    keyboardWrapper.setAttribute('for', 'keyboard');
     container.appendChild(keyboardWrapper);
+
+let textmore = document.createElement('p');
+    textmore.classList = 'text__more';
+    textmore = document.createTextNode('Virtual Keyboard');
+    keyboardWrapper.append(textmore)
+
 
 // consts
 
 window.onload = function () {
 
     renderButtons();
+    
 
     inputText.addEventListener('click', e => {  // перемещение курсора
         caretAt = inputText.selectionStart;
     })
 
-    keyboardWrapper.addEventListener('click', onScreenKeyboardSet); //набор текста с экранной клавиатуры
+    this.document.addEventListener('keydown', keyboardKeyProcessing)
+
+    keyboardWrapper.addEventListener('mousedown', onScreenKeyboardSet); //набор текста с экранной клавиатуры
+    keyboardWrapper.addEventListener('mouseup', deleteBackliteButtons); 
     inputText.addEventListener('keydown', backliteButtons);    // подсветка клавиатуры
     inputText.addEventListener('keyup', deleteBackliteButtons); // удаление подсветки клавиатуры
 
 }
 
+const keyboardKeyProcessing = (e) => {
+    if (e.shiftKey && e.altKey) {
+        selectLanguage()
+    } 
+
+    if (e.shiftKey && e.code === 'AltRight') {
+        selectLanguage()
+    }
+
+
+    if (e.getModifierState('CapsLock') === true) {
+        capsLockFunctionOn(e)
+    } else {
+        capsLockFunctionOff(e)
+    }
+    
+}
+
 const onScreenKeyboardSet = (e) => {
-    inputText.focus();
     let arr = document.querySelector('textarea').value.split("");
+    let temp = e.target;
+
+    if (e.target.classList.contains('layout')) {
+        temp = e.target.offsetParent;
+    }
+
+    capsLockFunctionOn(e);
+    languageSwitch(e);
+
     buttons.forEach(el => {
-        if (el.code === e.target.getAttribute("data-code") && (el.print === true) && (e.target.classList.contains('keyboard__button'))) {
+
+        backliteButtons(e.target.dataset);
+        if (el.code === temp.getAttribute("data-code") && (el.print === true) && (temp.classList.contains('keyboard__button'))) {
+            
             caretAt = inputText.selectionStart; 
-            let clild = e.target.childNodes; 
+            let clild = temp.childNodes; 
             let letter;
             clild.forEach(el => {   
                 if (el.classList.contains('layout--active')) { 
@@ -172,16 +211,19 @@ const onScreenKeyboardSet = (e) => {
         }
 
         if ((el.code === e.target.getAttribute("data-code")) && (el.code === 'ArrowLeft')) {
+            inputText.focus();
             caretAt = inputText.selectionStart;
             inputText.selectionStart = inputText.selectionEnd = caretAt - 1 ;
         }
 
         if ((el.code === e.target.getAttribute("data-code")) && (el.code === 'ArrowRight')) {
+            inputText.focus();
             caretAt = inputText.selectionStart;
             inputText.selectionStart = inputText.selectionEnd = caretAt + 1 ;
         }
 
         if ((el.code === e.target.getAttribute("data-code")) && (el.code === 'Enter')) {
+            inputText.focus();
             caretAt = inputText.selectionStart;
             arr.splice(caretAt, 0, '\n');
             document.querySelector('textarea').value = arr.join("");
@@ -194,24 +236,62 @@ const onScreenKeyboardSet = (e) => {
             document.querySelector('textarea').value = arr.join("");
             inputText.selectionStart = inputText.selectionEnd = caretAt ;
         }
-
-        if ((e.target.getAttribute("data-code") === 'CapsLock')) {
-            if (el.print === true) {
-                document.querySelector(`div[data-code=${el.code}]`).classList.toggle('keyboard__button--ssss')
-            }
-        }
-
-        // if ((e.target.getAttribute("data-code") === 'ControlRight')) {
-        //     if (el.print === true) {
-        //         document.querySelectorAll(`div[data-code=${el.code}] span`)[0].classList.toggle('layout--active')
-        //         document.querySelectorAll(`div[data-code=${el.code}] span`)[1].classList.toggle('layout--active')
-        //         // console.log(el)
-        //     }
-        // }
     })
 
     
 } 
+
+//capsLock
+const capsLockFunctionOn = (e) => {
+    let temp;
+    if (e.type === 'mousedown')  {
+        temp = e.target.dataset.code
+    } else {
+        temp = e.key
+    }
+
+    buttons.forEach(el => {
+        if ((e.target.getAttribute("data-code") === 'CapsLock') || (e.key === 'CapsLock')) {
+            
+            if (el.code === 'CapsLock') {
+                document.querySelector('div[data-code="CapsLock"]').classList.toggle('active')
+            }
+
+            if (el.print === true) {
+                document.querySelector(`div[data-code=${el.code}]`).classList.toggle('keyboard__button--upper')
+            }
+        }
+    })
+}
+const capsLockFunctionOff = (e) => {
+    let temp;
+    if (e.type === 'mousedown')  {
+        temp = e.target.dataset.code
+    }
+
+    buttons.forEach(el => {
+        if ((e.target.getAttribute("data-code") === 'CapsLock') || (e.key === 'CapsLock')) {
+            
+            if (el.code === 'CapsLock') {
+                document.querySelector('div[data-code="CapsLock"]').classList.remove('active')
+            }
+
+            if (el.print === true) {
+                document.querySelector(`div[data-code=${el.code}]`).classList.toggle('keyboard__button--upper')
+            }
+        }
+    })
+}
+
+
+const languageSwitch = (e) => {
+    buttons.forEach(el => {
+        if ((el.code === 'AltLeft') && (el.code === e.target.getAttribute("data-code"))) {
+            // e.target.classList.add('active')
+        }
+    })
+}
+
 
 //  render buttons
 function renderButtons() {
@@ -229,6 +309,17 @@ function generateButtons() {
     return buttonsArray;
 }
 
+
+// выбор языка
+const selectLanguage = () => {
+    buttons.forEach(el => {
+        if (el.print === true) {
+            document.querySelectorAll(`div[data-code=${el.code}] span`)[0].classList.toggle('layout--active')
+            document.querySelectorAll(`div[data-code=${el.code}] span`)[1].classList.toggle('layout--active')
+        }
+    })
+} 
+
 //  подсветка при наборе с клавиатуры
 function backliteButtons(e) {
 
@@ -239,12 +330,20 @@ function backliteButtons(e) {
             }
     })
 }
-
-
-
 // удаление подсветки
 function deleteBackliteButtons(e) {
-    let el11 = document.querySelector(`div[data-code="${(e.code)}"`);
-    el11.classList.remove('active')
+    let tempCode;
+    let temp1 = e.target;
 
+    if (e.target.classList.contains('layout')) {
+        temp1 = e.target.offsetParent;
+    }
+
+    if (e.type === 'mouseup')  {
+        tempCode = temp1.dataset.code
+    } else {
+        tempCode = e.code
+    }
+
+    document.querySelector(`div[data-code="${tempCode}"`).classList.remove('active');
 }
