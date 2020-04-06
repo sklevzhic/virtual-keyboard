@@ -12,7 +12,13 @@ export class Button {
     generateButton() {
         let template = '';
         let button = document.createElement('div');
-        button.className = 'keyboard__button';
+        
+        if (this.print === false) {
+            button.className = 'keyboard__button keyboard__button--spec';
+        } else {
+            button.className = 'keyboard__button';
+        }
+
         button.setAttribute('data-code',`${this.code}`)
         if (this.print === false) {
             template += `<span class="layout layout-stable">${this.en}</span>`;

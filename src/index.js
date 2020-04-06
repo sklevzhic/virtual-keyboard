@@ -68,9 +68,7 @@ const buttons = [
 ];
     let buttonsArray = [];
     let caretAt;
-
-
-
+    let lang = 0;
 
 let body = document.querySelector('body');
 
@@ -126,6 +124,8 @@ let textmore = document.createElement('p');
 window.onload = function () {
 
     renderButtons();
+
+
     
 
     inputText.addEventListener('click', e => {  // перемещение курсора
@@ -133,165 +133,12 @@ window.onload = function () {
     })
 
     this.document.addEventListener('keydown', keyboardKeyProcessing)
-
     keyboardWrapper.addEventListener('mousedown', onScreenKeyboardSet); //набор текста с экранной клавиатуры
+        inputText.addEventListener('keydown', backliteButtons);    // подсветка клавиатуры
     keyboardWrapper.addEventListener('mouseup', deleteBackliteButtons); 
-    inputText.addEventListener('keydown', backliteButtons);    // подсветка клавиатуры
     inputText.addEventListener('keyup', deleteBackliteButtons); // удаление подсветки клавиатуры
-
-}
-
-const keyboardKeyProcessing = (e) => {
-    if (e.shiftKey && e.altKey) {
-        selectLanguage()
-    } 
-
-    if (e.shiftKey && e.code === 'AltRight') {
-        selectLanguage()
-    }
-
-
-    if (e.getModifierState('CapsLock') === true) {
-        capsLockFunctionOn(e)
-    } else {
-        capsLockFunctionOff(e)
-    }
     
 }
-
-const onScreenKeyboardSet = (e) => {
-    let arr = document.querySelector('textarea').value.split("");
-    let temp = e.target;
-
-    if (e.target.classList.contains('layout')) {
-        temp = e.target.offsetParent;
-    }
-
-    capsLockFunctionOn(e);
-    languageSwitch(e);
-
-    buttons.forEach(el => {
-
-        backliteButtons(e.target.dataset);
-        if (el.code === temp.getAttribute("data-code") && (el.print === true) && (temp.classList.contains('keyboard__button'))) {
-            
-            caretAt = inputText.selectionStart; 
-            let clild = temp.childNodes; 
-            let letter;
-            clild.forEach(el => {   
-                if (el.classList.contains('layout--active')) { 
-                    letter = el.outerText
-                }
-            })
-            arr.splice(caretAt, 0, letter);
-            document.querySelector('textarea').value = arr.join("");
-            inputText.selectionStart = inputText.selectionEnd = caretAt + 1;
-
-        }
-
-        if ((el.code === e.target.getAttribute("data-code")) && (el.code === 'Delete')) {
-            caretAt = inputText.selectionStart;
-            arr.splice(caretAt, 1);
-            document.querySelector('textarea').value = arr.join("");
-            inputText.selectionStart = inputText.selectionEnd = caretAt;
-        }
-
-        if ((el.code === e.target.getAttribute("data-code")) && (el.code === 'Backspace')) {
-            caretAt = inputText.selectionStart;
-            arr.splice(caretAt-1, 1);
-            document.querySelector('textarea').value = arr.join("");
-            inputText.selectionStart = inputText.selectionEnd = caretAt - 1;
-        }
-
-        if ((el.code === e.target.getAttribute("data-code")) && (el.code === 'Tab')) {
-            caretAt = inputText.selectionStart;
-            arr.splice(caretAt, 0, '    ');
-            document.querySelector('textarea').value = arr.join("");
-            inputText.selectionStart = inputText.selectionEnd = caretAt + 4 ;
-        }
-
-        if ((el.code === e.target.getAttribute("data-code")) && (el.code === 'ArrowLeft')) {
-            inputText.focus();
-            caretAt = inputText.selectionStart;
-            inputText.selectionStart = inputText.selectionEnd = caretAt - 1 ;
-        }
-
-        if ((el.code === e.target.getAttribute("data-code")) && (el.code === 'ArrowRight')) {
-            inputText.focus();
-            caretAt = inputText.selectionStart;
-            inputText.selectionStart = inputText.selectionEnd = caretAt + 1 ;
-        }
-
-        if ((el.code === e.target.getAttribute("data-code")) && (el.code === 'Enter')) {
-            inputText.focus();
-            caretAt = inputText.selectionStart;
-            arr.splice(caretAt, 0, '\n');
-            document.querySelector('textarea').value = arr.join("");
-            inputText.selectionStart = inputText.selectionEnd = caretAt + 1;
-        }
-
-        if ((el.code === e.target.getAttribute("data-code")) && (el.code === 'Space')) {
-            caretAt = inputText.selectionStart;
-            arr.splice(caretAt, 0, ' ');
-            document.querySelector('textarea').value = arr.join("");
-            inputText.selectionStart = inputText.selectionEnd = caretAt ;
-        }
-    })
-
-    
-} 
-
-//capsLock
-const capsLockFunctionOn = (e) => {
-    let temp;
-    if (e.type === 'mousedown')  {
-        temp = e.target.dataset.code
-    } else {
-        temp = e.key
-    }
-
-    buttons.forEach(el => {
-        if ((e.target.getAttribute("data-code") === 'CapsLock') || (e.key === 'CapsLock')) {
-            
-            if (el.code === 'CapsLock') {
-                document.querySelector('div[data-code="CapsLock"]').classList.toggle('active')
-            }
-
-            if (el.print === true) {
-                document.querySelector(`div[data-code=${el.code}]`).classList.toggle('keyboard__button--upper')
-            }
-        }
-    })
-}
-const capsLockFunctionOff = (e) => {
-    let temp;
-    if (e.type === 'mousedown')  {
-        temp = e.target.dataset.code
-    }
-
-    buttons.forEach(el => {
-        if ((e.target.getAttribute("data-code") === 'CapsLock') || (e.key === 'CapsLock')) {
-            
-            if (el.code === 'CapsLock') {
-                document.querySelector('div[data-code="CapsLock"]').classList.remove('active')
-            }
-
-            if (el.print === true) {
-                document.querySelector(`div[data-code=${el.code}]`).classList.toggle('keyboard__button--upper')
-            }
-        }
-    })
-}
-
-
-const languageSwitch = (e) => {
-    buttons.forEach(el => {
-        if ((el.code === 'AltLeft') && (el.code === e.target.getAttribute("data-code"))) {
-            // e.target.classList.add('active')
-        }
-    })
-}
-
 
 //  render buttons
 function renderButtons() {
@@ -310,6 +157,168 @@ function generateButtons() {
 }
 
 
+const onScreenKeyboardSet = (e) => {
+    let arr = document.querySelector('textarea').value.split("");
+    let temp = e.target;
+
+    if (e.target.classList.contains('layout')) {
+        temp = e.target.offsetParent;
+    }
+
+    
+    caretAt = inputText.selectionStart;
+
+
+    if (e.target.className !== 'keyboard__button--spec') {
+        let clild = temp.childNodes; 
+        let letter;
+    
+        clild.forEach(el => {   
+            if (el.classList.contains('layout--active')) { 
+                letter = el.outerText
+            }
+        })
+    
+        arr.splice(caretAt, 0, letter);
+        document.querySelector('textarea').value = arr.join("");
+        inputText.selectionStart = inputText.selectionEnd = caretAt + 1;
+    }
+
+    if (temp.getAttribute("data-code") === 'Delete') {
+        caretAt = inputText.selectionStart;
+        arr.splice(caretAt, 1);
+        document.querySelector('textarea').value = arr.join("");
+        inputText.selectionStart = inputText.selectionEnd = caretAt - 1;
+    }
+
+    if (temp.getAttribute("data-code") === 'Backspace') {
+        arr.splice(caretAt-1, 1);
+        document.querySelector('textarea').value = arr.join("");
+        inputText.selectionStart = inputText.selectionEnd = caretAt - 1;
+    }
+
+    if (temp.getAttribute("data-code") === 'Tab') {
+        caretAt = inputText.selectionStart;
+        arr.splice(caretAt, 0, '    ');
+        document.querySelector('textarea').value = arr.join("");
+        inputText.selectionStart = inputText.selectionEnd = caretAt + 3;
+    }
+
+    if (temp.getAttribute("data-code") === 'Space') {
+            caretAt = inputText.selectionStart;
+            arr.splice(caretAt, 0, ' ');
+            document.querySelector('textarea').value = arr.join("");
+            inputText.selectionStart = inputText.selectionEnd = caretAt;
+    }
+
+    if (temp.getAttribute("data-code") === 'Enter') {
+            inputText.focus();
+            arr.splice(caretAt, 0, '\n');
+            document.querySelector('textarea').value = arr.join("");
+            inputText.selectionStart = inputText.selectionEnd = caretAt + 1;
+    }
+
+    if (temp.getAttribute("data-code") === 'ArrowLeft') {
+        inputText.focus();
+        // caretAt = inputText.selectionStart;
+        inputText.selectionStart = inputText.selectionEnd = caretAt - 1 ;
+    }
+
+    if (temp.getAttribute("data-code") === 'ArrowRight') {
+        inputText.focus();
+        caretAt = inputText.selectionStart;
+        inputText.selectionStart = inputText.selectionEnd = caretAt ;
+    }
+
+    // if (temp.getAttribute("data-code") === 'AltLeft') {
+    //     if (temp.classList.contains('active')) {
+    //         // console.log(e);
+    //     }
+    // }
+
+    let alt = document.querySelector('div[data-code="AltLeft"]')
+    // let shift = document.querySelector('div[data-code="ShiftLeft"]')
+    if (alt.classList.contains('active') && (e.target.getAttribute("data-code") === 'ShiftLeft')) {
+        selectLanguage()
+        alt.classList.remove('active');
+    } 
+
+    if (temp.className === 'keyboard__button keyboard__button--spec active')  {
+        capsLockOff(e);
+    } else if ((temp.className === 'keyboard__button keyboard__button--spec') && (temp.getAttribute("data-code") === 'CapsLock')) {
+        capsLockOn(e);     
+    }
+    
+    if (temp.classList.contains('keyboard__button'))  {
+        backliteButtons(e);
+    }
+
+}
+
+// обработка кликов на клавиатуре
+const keyboardKeyProcessing = (e) => {
+    if (e.shiftKey && e.altKey) {
+        selectLanguage()
+    } 
+   
+    if (e.getModifierState('CapsLock') === true) {
+        capsLockOn(e);
+    } else {
+        capsLockOff(e);
+    }    
+}
+
+// capsLock
+const capsLockOn = (e) => {
+    if (e.type === 'keydown') {
+        document.querySelector(`div[data-code="CapsLock"]`).classList.add('active');
+        document.querySelectorAll('.keyboard__button').forEach(el => {
+            if (el.className === 'keyboard__button') {
+                el.classList.add('keyboard__button--upper')
+            }
+        })
+    } else {
+        let temp = e.target;
+        if (e.target.classList.contains('layout')) {
+            temp = e.target.offsetParent;
+        }
+    
+        temp.classList.add('active');
+        inputText.selectionStart = inputText.selectionEnd = caretAt + 3;
+        document.querySelectorAll('.keyboard__button').forEach(el => {
+            if (el.className === 'keyboard__button') {
+                el.classList.add('keyboard__button--upper')
+            }
+        })
+    }
+
+
+}
+
+const capsLockOff = (e) => {
+    if (e.type === 'keydown') {
+        document.querySelector(`div[data-code="CapsLock"]`).classList.remove('active');
+        document.querySelectorAll('.keyboard__button').forEach(el => {
+            el.classList.remove('keyboard__button--upper')
+            })
+    } else {
+        let temp = e.target;
+        if (e.target.classList.contains('layout')) {
+            temp = e.target.offsetParent;
+        }
+        temp.classList.remove('active');
+        inputText.selectionStart = inputText.selectionEnd = caretAt + 3;
+        document.querySelectorAll('.keyboard__button').forEach(el => {
+        el.classList.remove('keyboard__button--upper')
+        })
+    }
+
+}
+
+
+
+
+
 // выбор языка
 const selectLanguage = () => {
     buttons.forEach(el => {
@@ -320,30 +329,52 @@ const selectLanguage = () => {
     })
 } 
 
-//  подсветка при наборе с клавиатуры
-function backliteButtons(e) {
-
-    buttons.forEach(el => {
-            if (e.code === el.code) {
-                let el11 = document.querySelector(`div[data-code="${(e.code)}"`);
-                el11.classList.add('active')
-            }
-    })
-}
-// удаление подсветки
-function deleteBackliteButtons(e) {
-    let tempCode;
-    let temp1 = e.target;
-
+// //  подсветка при наборе с клавиатуры
+const backliteButtons = (e) => {
+    let temp = e.target;
     if (e.target.classList.contains('layout')) {
-        temp1 = e.target.offsetParent;
+        temp = e.target.offsetParent;
+    }
+    if ((temp.getAttribute("data-code") !== 'CapsLock') && (e.code !== 'CapsLock') || (temp.getAttribute("data-code") !== 'AltLeft'))  {
+
+        if (temp.classList.contains('keyboard__button')) {
+            temp.classList.add('active');
+        }
+        if (e.type === 'keydown')  {
+            document.querySelector(`div[data-code="${e.code}"`).classList.add('active');
+        } 
+        if (temp.getAttribute("data-code") === 'CapsLock') {
+            temp.classList.add('active');
+        } 
+        if (temp.getAttribute("data-code") === 'AltLeft') {
+            temp.classList.add('active');
+        } 
     }
 
-    if (e.type === 'mouseup')  {
-        tempCode = temp1.dataset.code
-    } else {
-        tempCode = e.code
+
+
+    
+}
+
+// // удаление подсветки
+const deleteBackliteButtons = (e) => {
+    let temp = e.target;
+    if (e.target.classList.contains('layout')) {
+        temp = e.target.offsetParent;
+    }
+    if (((temp.getAttribute("data-code") !== 'CapsLock') && (e.code !== 'CapsLock'))  && (temp.getAttribute("data-code") !== 'AltLeft')) {
+        let tempCode;
+        if (e.type === 'keyup')  {
+            tempCode = e.code;
+        } else if (e.type === 'mouseup') {
+            tempCode = temp.dataset.code;
+        } 
+        document.querySelector(`div[data-code="${tempCode}"`).classList.remove('active')
     }
 
-    document.querySelector(`div[data-code="${tempCode}"`).classList.remove('active');
+
+    
+    
+
+
 }
