@@ -115,27 +115,24 @@ let keyboardWrapper = document.createElement('label')
 
 let textmore = document.createElement('p');
     textmore.classList = 'text__more';
-    textmore = document.createTextNode('Virtual Keyboard');
-    keyboardWrapper.append(textmore)
+    container.append(textmore)
 
 
+    textmore.innerHTML = '<h3 style ="text-align:center">Alt + Shift , переключение раскладки</h3>'
 // consts
 
 window.onload = function () {
 
     renderButtons();
 
-
-    
-
     inputText.addEventListener('click', e => {  // перемещение курсора
         caretAt = inputText.selectionStart;
     })
 
-    this.document.addEventListener('keydown', keyboardKeyProcessing)
+    this.document.addEventListener('keydown', keyboardKeyProcessing) //набор текста с клавиатуры
     keyboardWrapper.addEventListener('mousedown', onScreenKeyboardSet); //набор текста с экранной клавиатуры
-        inputText.addEventListener('keydown', backliteButtons);    // подсветка клавиатуры
-    keyboardWrapper.addEventListener('mouseup', deleteBackliteButtons); 
+    inputText.addEventListener('keydown', backliteButtons);    // подсветка клавиатуры
+    keyboardWrapper.addEventListener('mouseup', deleteBackliteButtons);  // удаление подсветки клавиатуры
     inputText.addEventListener('keyup', deleteBackliteButtons); // удаление подсветки клавиатуры
     
 }
@@ -156,7 +153,7 @@ function generateButtons() {
     return buttonsArray;
 }
 
-
+//набор текста с экранной клавиатуры
 const onScreenKeyboardSet = (e) => {
     let arr = document.querySelector('textarea').value.split("");
     let temp = e.target;
@@ -230,14 +227,8 @@ const onScreenKeyboardSet = (e) => {
         inputText.selectionStart = inputText.selectionEnd = caretAt ;
     }
 
-    // if (temp.getAttribute("data-code") === 'AltLeft') {
-    //     if (temp.classList.contains('active')) {
-    //         // console.log(e);
-    //     }
-    // }
-
     let alt = document.querySelector('div[data-code="AltLeft"]')
-    // let shift = document.querySelector('div[data-code="ShiftLeft"]')
+    let shift = document.querySelector('div[data-code="ShiftLeft"]')
     if (alt.classList.contains('active') && (e.target.getAttribute("data-code") === 'ShiftLeft')) {
         selectLanguage()
         alt.classList.remove('active');
@@ -266,6 +257,7 @@ const keyboardKeyProcessing = (e) => {
     } else {
         capsLockOff(e);
     }    
+    
 }
 
 // capsLock
@@ -315,10 +307,6 @@ const capsLockOff = (e) => {
 
 }
 
-
-
-
-
 // выбор языка
 const selectLanguage = () => {
     buttons.forEach(el => {
@@ -335,7 +323,7 @@ const backliteButtons = (e) => {
     if (e.target.classList.contains('layout')) {
         temp = e.target.offsetParent;
     }
-    if ((temp.getAttribute("data-code") !== 'CapsLock') && (e.code !== 'CapsLock') || (temp.getAttribute("data-code") !== 'AltLeft'))  {
+    if ((temp.getAttribute("data-code") !== 'CapsLock') && (e.code !== 'CapsLock'))  {
 
         if (temp.classList.contains('keyboard__button')) {
             temp.classList.add('active');
@@ -362,7 +350,7 @@ const deleteBackliteButtons = (e) => {
     if (e.target.classList.contains('layout')) {
         temp = e.target.offsetParent;
     }
-    if (((temp.getAttribute("data-code") !== 'CapsLock') && (e.code !== 'CapsLock'))  && (temp.getAttribute("data-code") !== 'AltLeft')) {
+    if (((temp.getAttribute("data-code") !== 'CapsLock') && (e.code !== 'CapsLock'))) {
         let tempCode;
         if (e.type === 'keyup')  {
             tempCode = e.code;
