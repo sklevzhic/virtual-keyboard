@@ -323,7 +323,7 @@ const backliteButtons = (e) => {
     if (e.target.classList.contains('layout')) {
         temp = e.target.offsetParent;
     }
-    if ((temp.getAttribute("data-code") !== 'CapsLock') && (e.code !== 'CapsLock'))  {
+    if ((temp.getAttribute("data-code") !== 'CapsLock') && (e.code !== 'CapsLock') || (temp.getAttribute("data-code") !== 'AltLeft'))  {
 
         if (temp.classList.contains('keyboard__button')) {
             temp.classList.add('active');
@@ -350,7 +350,7 @@ const deleteBackliteButtons = (e) => {
     if (e.target.classList.contains('layout')) {
         temp = e.target.offsetParent;
     }
-    if (((temp.getAttribute("data-code") !== 'CapsLock') && (e.code !== 'CapsLock'))) {
+    if (((temp.getAttribute("data-code") !== 'CapsLock') && (e.code !== 'CapsLock')) && (temp.getAttribute("data-code") !== 'AltLeft')) {
         let tempCode;
         if (e.type === 'keyup')  {
             tempCode = e.code;
